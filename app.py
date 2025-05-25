@@ -70,7 +70,8 @@ def analyze():
         img = io.BytesIO()
         plt.savefig(img, format='png')
         img.seek(0)
-        plt.close()
+        plt.close(fig)
+
 
         return send_file(img, mimetype='image/png')
     except Exception as e:
