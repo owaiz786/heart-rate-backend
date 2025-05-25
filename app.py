@@ -1,9 +1,9 @@
 from flask import Flask, request, jsonify
 import numpy as np
 from scipy.signal import butter, lfilter, periodogram, detrend
-
+from flask_cors import CORS 
 app = Flask(__name__)
-
+CORS(app)  
 def bandpass_filter(data, lowcut=0.75, highcut=3.0, fs=30.0, order=4):
     nyq = 0.5 * fs
     low = lowcut / nyq
