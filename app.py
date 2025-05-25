@@ -1,7 +1,8 @@
-
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')  # ✅ Force server-friendly backend
 import matplotlib.pyplot as plt
 from scipy.signal import butter, lfilter, periodogram, detrend
 import io
@@ -44,7 +45,7 @@ def analyze():
         peak_freq = f[valid][np.argmax(Pxx[valid])]
         bpm = peak_freq * 60
 
-        # --- Generate Plot ---
+        # Plot all in one figure
         fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(10, 10))
 
         ax1.plot(signal, color='green')
@@ -67,14 +68,17 @@ def analyze():
 
         plt.tight_layout()
 
+        # Convert figure to image in memory
         img = io.BytesIO()
-        plt.savefig(img, format='png')
+        fig.savefig(img, format='png')
         img.seek(0)
         plt.close(fig)
 
-
         return send_file(img, mimetype='image/png')
+    
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
